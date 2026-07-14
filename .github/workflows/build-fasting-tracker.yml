@@ -48,8 +48,11 @@ jobs:
       - name: Descărcare cod
         uses: actions/checkout@v3
         
-      - name: Selectare versiune Xcode 16
-        run: sudo xcode-select -s /Applications/Xcode_16.0.app
+      - name: Selectare versiune Xcode maximă disponibilă
+        run: |
+          XCODE_PATH=$(ls -d /Applications/Xcode*.app | sort -V | tail -n 1)
+          echo "Selecting highest available Xcode version: $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH"
         
       - name: Instalare XcodeGen
         run: brew install xcodegen
