@@ -1,6 +1,7 @@
 name: FastingTracker
 options:
   bundleIdPrefix: com.oalexoprea
+  minimumXcodeVersion: "15.0"
 targets:
   FastingTracker:
     type: application
