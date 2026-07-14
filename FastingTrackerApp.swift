@@ -1,3 +1,4 @@
+// FastingTracker App - App Store Release
 import SwiftUI
 
 @main
