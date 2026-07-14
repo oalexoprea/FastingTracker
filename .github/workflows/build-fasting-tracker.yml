@@ -16,7 +16,7 @@ jobs:
   # 1. Validare și Compilare rapidă (CI) - Rulează instantaneu fără a necesita certificate Apple sau proiect Xcode
   build-and-test:
     name: Verificare Compilare macOS
-    runs-on: macos-12
+    runs-on: macos-13
     
     steps:
       - name: Descărcare cod din repozitoriu
@@ -44,7 +44,7 @@ jobs:
   # release-app-store:
   #   name: Publicare în App Store (TestFlight)
   #   needs: build-and-test
-  #   runs-on: macos-12
+  #   runs-on: macos-13
   #   if: github.ref == 'refs/heads/main'
   #   
   #   steps:
