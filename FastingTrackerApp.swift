@@ -1,4 +1,4 @@
-// FastingTracker App - App Store Release
+// FastingTracker App - App Store Release v1.0
 import SwiftUI
 
 @main
