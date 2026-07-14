@@ -9,6 +9,7 @@ targets:
     deploymentTarget: "15.0"
     settings:
       DEVELOPMENT_TEAM: MT4VPZ4AVA
+      GENERATE_INFOPLIST_FILE: true
     sources:
       - path: .
         excludes:
