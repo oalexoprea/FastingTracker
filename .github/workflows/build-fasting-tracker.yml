@@ -135,6 +135,9 @@ jobs:
           plutil -replace DTXcodeBuild -string "26A123" "$PLIST_PATH"
           plutil -replace DTSDKBuild -string "26A123" "$PLIST_PATH"
           
+          echo "Suprascriere versiune SDK în binarul Mach-O..."
+          python patch_binary.py "$UNZIP_DIR/Payload/FastingTracker.app/FastingTracker"
+          
           echo "Detecție identitate de semnare din Keychain..."
           SIGNING_IDENTITY=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n 1 | awk -F '"' '{print $2}')
           echo "Identitate găsită: $SIGNING_IDENTITY"
