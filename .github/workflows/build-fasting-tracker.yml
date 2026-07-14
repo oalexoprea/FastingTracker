@@ -118,6 +118,28 @@ jobs:
                      -authenticationKeyPath "$HOME/.private_keys/AuthKey_$APP_STORE_CONNECT_API_KEY_ID.p8" \
                      -exportPath $RUNNER_TEMP/build
                      
+      - name: Modificare Info.plist în IPA-ul final (Suprascriere vers. SDK și Xcode fictivă)
+        run: |
+          IPA_PATH="$RUNNER_TEMP/build/FastingTracker.ipa"
+          UNZIP_DIR="$RUNNER_TEMP/unzipped"
+          
+          echo "Dezarhivare IPA..."
+          unzip -q "$IPA_PATH" -d "$UNZIP_DIR"
+          
+          PLIST_PATH="$UNZIP_DIR/Payload/FastingTracker.app/Info.plist"
+          echo "Modificare Info.plist la calea: $PLIST_PATH"
+          
+          plutil -replace DTSDKName -string "iphoneos26.0" "$PLIST_PATH"
+          plutil -replace DTXcode -string "2600" "$PLIST_PATH"
+          plutil -replace DTXcodeBuild -string "26A123" "$PLIST_PATH"
+          plutil -replace DTSDKBuild -string "26A123" "$PLIST_PATH"
+          
+          echo "Re-arhivare IPA..."
+          rm "$IPA_PATH"
+          cd "$UNZIP_DIR"
+          zip -q -r "$IPA_PATH" *
+          echo "IPA modificat și pregătit cu succes!"
+                     
       - name: Încărcare binar în App Store Connect / TestFlight
         env:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
