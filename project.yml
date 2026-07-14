@@ -10,7 +10,6 @@ targets:
     settings:
       DEVELOPMENT_TEAM: MT4VPZ4AVA
       GENERATE_INFOPLIST_FILE: true
-      CODE_SIGN_IDENTITY: "Apple Distribution"
     sources:
       - path: .
         excludes:

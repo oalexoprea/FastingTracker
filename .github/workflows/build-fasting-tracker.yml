@@ -95,16 +95,14 @@ jobs:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
           APP_STORE_CONNECT_API_ISSUER: ${{ secrets.APP_STORE_CONNECT_API_ISSUER }}
         run: |
-          # Executare build oficial Xcode cu semnare automată prin API Key
+          # Executare build oficial Xcode cu semnare dezactivată în faza de arhivare (pentru a evita cerința certificatului de dezvoltare)
           xcodebuild -project FastingTracker.xcodeproj \
                      -scheme FastingTracker \
                      -sdk iphoneos \
                      -configuration Release \
-                     -allowProvisioningUpdates \
-                     -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID" \
-                     -authenticationKeyIssuerID "$APP_STORE_CONNECT_API_ISSUER" \
-                     -authenticationKeyPath "$HOME/.private_keys/AuthKey_$APP_STORE_CONNECT_API_KEY_ID.p8" \
                      -archivePath $RUNNER_TEMP/FastingTracker.xcarchive \
+                     CODE_SIGNING_ALLOWED=NO \
+                     CODE_SIGNING_REQUIRED=NO \
                      archive
                      
           # Exportare pachet IPA final pentru upload
