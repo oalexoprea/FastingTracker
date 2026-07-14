@@ -7,6 +7,8 @@ targets:
     type: application
     platform: iOS
     deploymentTarget: "15.0"
+    settings:
+      DEVELOPMENT_TEAM: MT4VPZ4AVA
     sources:
       - path: .
         excludes:
