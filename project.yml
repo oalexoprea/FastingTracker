@@ -14,6 +14,12 @@ targets:
       MARKETING_VERSION: "1.0"
       TARGETED_DEVICE_FAMILY: "1"
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      plist:
+        DTSDKName: iphoneos26.0
+        DTXcode: "2600"
+        DTXcodeBuild: "26A123"
+        DTSDKBuild: "26A123"
     sources:
       - path: .
         excludes:
