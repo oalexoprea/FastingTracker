@@ -48,6 +48,12 @@ jobs:
   #     - name: Descărcare cod
   #       uses: actions/checkout@v3
   #       
+  #     - name: Instalare XcodeGen
+  #       run: brew install xcodegen
+  #       
+  #     - name: Generare Proiect Xcode (.xcodeproj)
+  #       run: xcodegen generate
+  #       
   #     - name: Instalare certificat Apple de distribuție
   #       env:
   #         BUILD_CERTIFICATE_BASE64: ${{ secrets.APP_STORE_CERTIFICATE_BASE64 }}
