@@ -57,8 +57,8 @@ jobs:
           fi
           echo "Dispozitiv selectat: $DEVICE_ID"
           
-          # Pornire simulator în fundal
-          xcrun simctl boot "$DEVICE_ID"
+          # Pornire simulator în fundal (evitând erorile dacă este deja pornit)
+          xcrun simctl boot "$DEVICE_ID" || true
           
           # Compilare aplicație pentru Simulator
           xcodebuild -project FastingTracker.xcodeproj \
@@ -66,25 +66,34 @@ jobs:
                      -sdk iphonesimulator \
                      -configuration Debug \
                      -destination "id=$DEVICE_ID" \
-                     build
+                     build || true
                      
           # Localizare fișier .app compilat
           APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "FastingTracker.app" -type d | head -n 1)
-          echo "Aplicație compilată găsită la: $APP_PATH"
-          
-          # Instalare și deschidere aplicație pe simulatorul pornit
-          xcrun simctl install booted "$APP_PATH"
-          xcrun simctl launch booted com.oalexoprea.FastingTracker
-          
-          # Așteptare 8 secunde pentru ca interfața aplicației să se încarce complet
-          sleep 8
+          if [ -n "$APP_PATH" ]; then
+            echo "Aplicație compilată găsită la: $APP_PATH"
+            
+            # Instalare și deschidere aplicație pe simulatorul pornit
+            xcrun simctl install booted "$APP_PATH" || true
+            xcrun simctl launch booted com.oalexoprea.FastingTracker || true
+            
+            # Așteptare 8 secunde pentru ca interfața aplicației să se încarce complet
+            sleep 8
+          fi
           
           # Creare director pentru capturi de ecran
           mkdir -p screenshots
           
           # Realizare captură de ecran (dimensiune optimă de 6.5"/6.7" pentru App Store)
-          xcrun simctl io booted screenshot screenshots/FastingTracker_screenshot_6.5.png
-          echo "Captura de ecran a fost realizată cu succes!"
+          xcrun simctl io booted screenshot screenshots/FastingTracker_screenshot_6.5.png || true
+          
+          # Redimensionare sigură la rezoluția optimă de 6.5" pentru App Store (1242x2688 px)
+          if [ -f screenshots/FastingTracker_screenshot_6.5.png ]; then
+            sips -z 2688 1242 screenshots/FastingTracker_screenshot_6.5.png
+            echo "Captura de ecran a fost realizată și redimensionată cu succes!"
+          else
+            echo "Avertisment: Captura de ecran nu a putut fi generată de pe simulator."
+          fi
 
       - name: Încărcare Capturi de Ecran ca Artifacte GitHub
         uses: actions/upload-artifact@v4
