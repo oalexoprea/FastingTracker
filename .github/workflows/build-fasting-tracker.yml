@@ -87,7 +87,7 @@ jobs:
           echo "Captura de ecran a fost realizată cu succes!"
 
       - name: Încărcare Capturi de Ecran ca Artifacte GitHub
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: App-Store-Screenshots-6.5
           path: screenshots/
