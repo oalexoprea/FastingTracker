@@ -14,9 +14,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  # 1. Validare și Compilare rapidă (CI) - Test de integritate cod
+  # 1. Validare, Compilare (CI) și Generare Capturi de Ecran de Simulator
   build-and-test:
-    name: Verificare Compilare macOS
+    name: Verificare și Generare Screenshots
     runs-on: macos-14
     
     steps:
@@ -34,6 +34,63 @@ jobs:
             FastingTrackerApp.swift \
             -o FastingTracker_test
           echo "Compilarea a reușit cu succes! Codul nu conține erori sintactice sau de tip."
+
+      - name: Selectare versiune Xcode maximă disponibilă
+        run: |
+          XCODE_PATH=$(ls -d /Applications/Xcode*.app | sort -V | tail -n 1)
+          echo "Selecting highest available Xcode version: $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH"
+
+      - name: Instalare XcodeGen
+        run: brew install xcodegen
+
+      - name: Generare Proiect Xcode (.xcodeproj)
+        run: xcodegen generate
+
+      - name: Rularea Simulatorului iOS și Realizarea capturilor de ecran
+        run: |
+          # Detecție dispozitiv de tip iPhone (ex: iPhone 15 Pro Max care are ecran de 6.5" / 6.7" acceptat de Apple)
+          DEVICE_ID=$(xcrun simctl list devices | grep "iPhone 15 Pro Max" | grep -v "unavailable" | head -n 1 | awk -F '(' '{print $2}' | awk -F ')' '{print $1}')
+          if [ -z "$DEVICE_ID" ]; then
+            # Fallback pe primul iPhone disponibil dacă iPhone 15 Pro Max nu există
+            DEVICE_ID=$(xcrun simctl list devices | grep "iPhone" | grep -v "unavailable" | head -n 1 | awk -F '(' '{print $2}' | awk -F ')' '{print $1}')
+          fi
+          echo "Dispozitiv selectat: $DEVICE_ID"
+          
+          # Pornire simulator în fundal
+          xcrun simctl boot "$DEVICE_ID"
+          
+          # Compilare aplicație pentru Simulator
+          xcodebuild -project FastingTracker.xcodeproj \
+                     -scheme FastingTracker \
+                     -sdk iphonesimulator \
+                     -configuration Debug \
+                     -destination "id=$DEVICE_ID" \
+                     build
+                     
+          # Localizare fișier .app compilat
+          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "FastingTracker.app" -type d | head -n 1)
+          echo "Aplicație compilată găsită la: $APP_PATH"
+          
+          # Instalare și deschidere aplicație pe simulatorul pornit
+          xcrun simctl install booted "$APP_PATH"
+          xcrun simctl launch booted com.oalexoprea.FastingTracker
+          
+          # Așteptare 8 secunde pentru ca interfața aplicației să se încarce complet
+          sleep 8
+          
+          # Creare director pentru capturi de ecran
+          mkdir -p screenshots
+          
+          # Realizare captură de ecran (dimensiune optimă de 6.5"/6.7" pentru App Store)
+          xcrun simctl screenshot booted screenshots/FastingTracker_screenshot_6.5.png
+          echo "Captura de ecran a fost realizată cu succes!"
+
+      - name: Încărcare Capturi de Ecran ca Artifacte GitHub
+        uses: actions/upload-artifact@v3
+        with:
+          name: App-Store-Screenshots-6.5
+          path: screenshots/
 
   # 2. Publicare automată în App Store (TestFlight)
   # Această etapă folosește semnătura automată Apple (Automatic Signing) prin cheia API de la Apple,
