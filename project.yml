@@ -10,14 +10,14 @@ targets:
     settings:
       DEVELOPMENT_TEAM: MT4VPZ4AVA
       GENERATE_INFOPLIST_FILE: true
-      CURRENT_PROJECT_VERSION: "10"
+      CURRENT_PROJECT_VERSION: "11"
       MARKETING_VERSION: "1.0"
       TARGETED_DEVICE_FAMILY: "1"
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-      INFOPLIST_KEY_DTSDKName: iphoneos18.2
-      INFOPLIST_KEY_DTXcode: "1620"
-      INFOPLIST_KEY_DTXcodeBuild: "16C5032"
-      INFOPLIST_KEY_DTSDKBuild: "22C150"
+      INFOPLIST_KEY_DTSDKName: iphoneos26.0
+      INFOPLIST_KEY_DTXcode: "2600"
+      INFOPLIST_KEY_DTXcodeBuild: "2600"
+      INFOPLIST_KEY_DTSDKBuild: "2600"
     sources:
       - path: .
         excludes:
