@@ -193,10 +193,13 @@ jobs:
           APP_PATH="$UNZIP_DIR/Payload/FastingTracker.app"
           echo "Modificare Info.plist la calea: $PLIST_PATH"
           
-          plutil -replace DTSDKName -string "iphoneos18.1" "$PLIST_PATH"
+          plutil -replace DTSDKName -string "iphoneos26.1" "$PLIST_PATH"
           plutil -replace DTXcode -string "1610" "$PLIST_PATH"
           plutil -replace DTXcodeBuild -string "16B40" "$PLIST_PATH"
-          plutil -replace DTSDKBuild -string "22B83" "$PLIST_PATH"
+          plutil -replace DTSDKBuild -string "26B40" "$PLIST_PATH"
+          
+          echo "Suprascriere versiune SDK în binarul Mach-O..."
+          python patch_binary.py "$UNZIP_DIR/Payload/FastingTracker.app/FastingTracker"
           
           echo "Detecție identitate de semnare din Keychain..."
           SIGNING_IDENTITY=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n 1 | awk -F '"' '{print $2}')
