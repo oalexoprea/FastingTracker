@@ -16,8 +16,8 @@ targets:
       ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
       INFOPLIST_KEY_DTSDKName: iphoneos26.0
       INFOPLIST_KEY_DTXcode: "2600"
-      INFOPLIST_KEY_DTXcodeBuild: "26A123"
-      INFOPLIST_KEY_DTSDKBuild: "26A123"
+      INFOPLIST_KEY_DTXcodeBuild: "26F2063"
+      INFOPLIST_KEY_DTSDKBuild: "26F2063"
     sources:
       - path: .
         excludes:
