@@ -181,39 +181,6 @@ jobs:
                      -authenticationKeyPath "$HOME/.private_keys/AuthKey_$APP_STORE_CONNECT_API_KEY_ID.p8" \
                      -exportPath $RUNNER_TEMP/build
                      
-      - name: Modificare Info.plist în IPA-ul final și Re-semnare digitală
-        run: |
-          IPA_PATH="$RUNNER_TEMP/build/FastingTracker.ipa"
-          UNZIP_DIR="$RUNNER_TEMP/unzipped"
-          
-          echo "Dezarhivare IPA..."
-          unzip -q "$IPA_PATH" -d "$UNZIP_DIR"
-          
-          PLIST_PATH="$UNZIP_DIR/Payload/FastingTracker.app/Info.plist"
-          APP_PATH="$UNZIP_DIR/Payload/FastingTracker.app"
-          echo "Modificare Info.plist la calea: $PLIST_PATH"
-          
-          plutil -replace DTSDKName -string "iphoneos26.0" "$PLIST_PATH"
-          plutil -replace DTXcode -string "2600" "$PLIST_PATH"
-          plutil -replace DTXcodeBuild -string "26F2063" "$PLIST_PATH"
-          plutil -replace DTSDKBuild -string "26F2063" "$PLIST_PATH"
-          
-          echo "Suprascriere versiune SDK în binarul Mach-O..."
-          python patch_binary.py "$UNZIP_DIR/Payload/FastingTracker.app/FastingTracker"
-          
-          echo "Detecție identitate de semnare din Keychain..."
-          SIGNING_IDENTITY=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n 1 | awk -F '"' '{print $2}')
-          echo "Identitate găsită: $SIGNING_IDENTITY"
-          
-          echo "Re-semnare digitală a pachetului .app..."
-          codesign --force --sign "$SIGNING_IDENTITY" --preserve-metadata=entitlements,requirements,flags --timestamp "$APP_PATH"
-          
-          echo "Re-arhivare IPA..."
-          rm "$IPA_PATH"
-          cd "$UNZIP_DIR"
-          zip -q -r "$IPA_PATH" *
-          echo "IPA modificat, re-semnat și pregătit cu succes!"
-                     
       - name: Încărcare binar în App Store Connect / TestFlight
         env:
           APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
