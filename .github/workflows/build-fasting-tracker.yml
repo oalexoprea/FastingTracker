@@ -195,8 +195,8 @@ jobs:
           
           plutil -replace DTSDKName -string "iphoneos26.0" "$PLIST_PATH"
           plutil -replace DTXcode -string "2600" "$PLIST_PATH"
-          plutil -replace DTXcodeBuild -string "26A123" "$PLIST_PATH"
-          plutil -replace DTSDKBuild -string "26A123" "$PLIST_PATH"
+          plutil -replace DTXcodeBuild -string "26F2063" "$PLIST_PATH"
+          plutil -replace DTSDKBuild -string "26F2063" "$PLIST_PATH"
           
           echo "Suprascriere versiune SDK în binarul Mach-O..."
           python patch_binary.py "$UNZIP_DIR/Payload/FastingTracker.app/FastingTracker"
