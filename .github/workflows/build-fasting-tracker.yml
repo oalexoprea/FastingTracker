@@ -17,7 +17,7 @@ jobs:
   # 1. Validare, Compilare (CI) și Generare Capturi de Ecran de Simulator
   build-and-test:
     name: Verificare și Generare Screenshots
-    runs-on: macos-14
+    runs-on: macos-15
     
     steps:
       - name: Descărcare cod din repozitoriu
@@ -36,7 +36,12 @@ jobs:
           echo "Compilarea a reușit cu succes! Codul nu conține erori sintactice sau de tip."
 
       - name: Selectare versiune Xcode stabilă (GM)
-        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+        run: |
+          echo "Disponibile în /Applications:"
+          ls -d /Applications/Xcode*.app || true
+          XCODE_PATH=$(ls -d /Applications/Xcode*.app | sort -V | tail -n 1)
+          echo "Selecting highest available Xcode version: $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH"
         
       - name: Instalare XcodeGen
         run: brew install xcodegen
@@ -107,7 +112,7 @@ jobs:
   release-app-store:
     name: Publicare în App Store (TestFlight)
     needs: build-and-test
-    runs-on: macos-14
+    runs-on: macos-15
     if: github.ref == 'refs/heads/main'
     
     steps:
@@ -115,7 +120,10 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Selectare versiune Xcode stabilă (GM)
-        run: sudo xcode-select -s /Applications/Xcode_16.2.app
+        run: |
+          XCODE_PATH=$(ls -d /Applications/Xcode*.app | sort -V | tail -n 1)
+          echo "Selecting highest available Xcode version: $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH"
         
       - name: Instalare XcodeGen
         run: brew install xcodegen
@@ -180,39 +188,6 @@ jobs:
                      -authenticationKeyIssuerID "$APP_STORE_CONNECT_API_ISSUER" \
                      -authenticationKeyPath "$HOME/.private_keys/AuthKey_$APP_STORE_CONNECT_API_KEY_ID.p8" \
                      -exportPath $RUNNER_TEMP/build
-                     
-      - name: Modificare Info.plist în IPA-ul final și Re-semnare digitală
-        run: |
-          IPA_PATH="$RUNNER_TEMP/build/FastingTracker.ipa"
-          UNZIP_DIR="$RUNNER_TEMP/unzipped"
-          
-          echo "Dezarhivare IPA..."
-          unzip -q "$IPA_PATH" -d "$UNZIP_DIR"
-          
-          PLIST_PATH="$UNZIP_DIR/Payload/FastingTracker.app/Info.plist"
-          APP_PATH="$UNZIP_DIR/Payload/FastingTracker.app"
-          echo "Modificare Info.plist la calea: $PLIST_PATH"
-          
-          plutil -replace DTSDKName -string "iphoneos26.0" "$PLIST_PATH"
-          plutil -replace DTXcode -string "2600" "$PLIST_PATH"
-          plutil -replace DTXcodeBuild -string "2600" "$PLIST_PATH"
-          plutil -replace DTSDKBuild -string "2600" "$PLIST_PATH"
-          
-          echo "Suprascriere versiune SDK în binarul Mach-O..."
-          python patch_binary.py "$UNZIP_DIR/Payload/FastingTracker.app/FastingTracker"
-          
-          echo "Detecție identitate de semnare din Keychain..."
-          SIGNING_IDENTITY=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n 1 | awk -F '"' '{print $2}')
-          echo "Identitate găsită: $SIGNING_IDENTITY"
-          
-          echo "Re-semnare digitală a pachetului .app..."
-          codesign --force --sign "$SIGNING_IDENTITY" --preserve-metadata=entitlements,requirements,flags --timestamp "$APP_PATH"
-          
-          echo "Re-arhivare IPA..."
-          rm "$IPA_PATH"
-          cd "$UNZIP_DIR"
-          zip -q -r "$IPA_PATH" *
-          echo "IPA modificat, re-semnat și pregătit cu succes!"
                      
       - name: Încărcare binar în App Store Connect / TestFlight
         env:
