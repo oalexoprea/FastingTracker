@@ -36,7 +36,7 @@ jobs:
           echo "Compilarea a reușit cu succes! Codul nu conține erori sintactice sau de tip."
 
       - name: Selectare versiune Xcode stabilă (GM)
-        run: sudo xcode-select -s /Applications/Xcode_16.1.app
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app
         
       - name: Instalare XcodeGen
         run: brew install xcodegen
@@ -115,7 +115,7 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Selectare versiune Xcode stabilă (GM)
-        run: sudo xcode-select -s /Applications/Xcode_16.1.app
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app
         
       - name: Instalare XcodeGen
         run: brew install xcodegen
@@ -193,13 +193,10 @@ jobs:
           APP_PATH="$UNZIP_DIR/Payload/FastingTracker.app"
           echo "Modificare Info.plist la calea: $PLIST_PATH"
           
-          plutil -replace DTSDKName -string "iphoneos26.1" "$PLIST_PATH"
-          plutil -replace DTXcode -string "1610" "$PLIST_PATH"
-          plutil -replace DTXcodeBuild -string "16B40" "$PLIST_PATH"
-          plutil -replace DTSDKBuild -string "26B40" "$PLIST_PATH"
-          
-          echo "Suprascriere versiune SDK în binarul Mach-O..."
-          python patch_binary.py "$UNZIP_DIR/Payload/FastingTracker.app/FastingTracker"
+          plutil -replace DTSDKName -string "iphoneos18.2" "$PLIST_PATH"
+          plutil -replace DTXcode -string "1620" "$PLIST_PATH"
+          plutil -replace DTXcodeBuild -string "16C5032" "$PLIST_PATH"
+          plutil -replace DTSDKBuild -string "22C150" "$PLIST_PATH"
           
           echo "Detecție identitate de semnare din Keychain..."
           SIGNING_IDENTITY=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -n 1 | awk -F '"' '{print $2}')
