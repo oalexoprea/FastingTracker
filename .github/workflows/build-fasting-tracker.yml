@@ -36,7 +36,7 @@ jobs:
           echo "Compilarea a reușit cu succes! Codul nu conține erori sintactice sau de tip."
 
       - name: Selectare versiune Xcode stabilă (GM)
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+        run: sudo xcode-select -s /Applications/Xcode_16.1.app
         
       - name: Instalare XcodeGen
         run: brew install xcodegen
@@ -115,7 +115,7 @@ jobs:
         uses: actions/checkout@v3
         
       - name: Selectare versiune Xcode stabilă (GM)
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+        run: sudo xcode-select -s /Applications/Xcode_16.1.app
         
       - name: Instalare XcodeGen
         run: brew install xcodegen
