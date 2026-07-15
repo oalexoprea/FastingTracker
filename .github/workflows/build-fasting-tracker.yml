@@ -44,6 +44,9 @@ jobs:
       - name: Instalare XcodeGen
         run: brew install xcodegen
 
+      - name: Generare Iconițe și Asset Catalog în mod dinamic
+        run: swift generate_assets.swift
+
       - name: Generare Proiect Xcode (.xcodeproj)
         run: xcodegen generate
 
