@@ -86,7 +86,7 @@ jobs:
           mkdir -p screenshots
           
           # Realizare captură de ecran (dimensiune optimă de 6.5"/6.7" pentru App Store)
-          xcrun simctl screenshot booted screenshots/FastingTracker_screenshot_6.5.png
+          xcrun simctl io booted screenshot screenshots/FastingTracker_screenshot_6.5.png
           echo "Captura de ecran a fost realizată cu succes!"
 
       - name: Încărcare Capturi de Ecran ca Artifacte GitHub
